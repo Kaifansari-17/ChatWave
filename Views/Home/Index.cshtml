@@ -1,0 +1,521 @@
+﻿@* @{
+    ViewData["Title"] = "Chat";
+}
+
+<h1>Tutorials SignalR</h1>
+<h4>You can Message </h4>
+
+<hr />
+<div class="container">
+    <div>
+        <label>Your Name : </label>
+        <input type="text" id="displayname"/>
+    </div>
+
+    <div class="mt-5">
+        <input type ="text" id="message"/>
+        <input type ="button" id="sendmessage" value="Send"/>
+    </div>
+
+    <div class="mt-3">
+        <ul id="discussion"></ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@10.0.0/dist/browser/signalr.min.js"></script>
+
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+
+    connection.start().catch(function (err){
+        return console.error(err.tostring())
+    });
+
+
+    document.getElementById("sendmessage").addEventListener("click",function(event){
+        var user = document.getElementById("displayname").value;
+        var message = document.getElementById("message").value;
+
+        connection.invoke("SendMessage",user,message).catch(function(err){
+        return console.error(err.tostring())
+        });
+
+        connection.on("RecieveMessage",function (user,message){
+
+            var encodedMsg = user + ": " + message;
+            var li = document.createElement("li");
+
+            li.textContent=encodedMsg;
+            document.getElementById("discussion").appendChild(li);
+        });
+    })
+</script> *@
+
+@* //////////////////////////////////////////////////////////////////////////////////// *@
+@* 
+@{
+    ViewData["Title"] = "Chat";
+} *@
+
+@* <h1>Tutorials SignalR</h1>
+<h4>You can message a specific person</h4>
+
+<hr />
+<div class="container">
+
+    <div>
+        <label>Your Name : </label>
+        <input type="text" id="displayname" />
+    </div>
+
+    <div>
+        <label>Recipient Name : </label>
+        <input type="text" id="recipientname" />
+    </div>
+
+    <button onclick="makeconnection()">connect</button>
+
+    <div class="mt-5">
+        <input type="text" id="message" />
+        <input type="button" id="sendmessage" value="Send" />
+    </div>
+
+    <div class="mt-3">
+        <ul id="discussion"></ul>
+    </div>
+</div> *@
+
+@* <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@10.0.0/dist/browser/signalr.min.js"></script>
+
+<script>
+
+    var connection;
+    function makeconnection(){
+        connection=new signalR.HubConnectionBuilder().withUrl("/chat?user="+ document.getElementById("displayname").value).build();
+          connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    // Listen for incoming messages
+    connection.on("ReceiveMessage", function (user, message) {
+        var encodedMsg = user + ": " + message;
+        var li = document.createElement("li");
+        li.textContent = encodedMsg;
+        document.getElementById("discussion").appendChild(li);
+    });
+    }
+
+  
+
+    // Send message when the user clicks the 'Send' button
+    document.getElementById("sendmessage").addEventListener("click", function (event) {
+        var user = document.getElementById("displayname").value;
+        var recipient = document.getElementById("recipientname").value;
+        var message = document.getElementById("message").value;
+
+        // Send the message to the specified recipient
+        connection.invoke("SendMessageToUser", recipient, message).then(()=>{
+            var encodedMsg = user + ": " + message;
+        var li = document.createElement("li");
+        li.textContent = encodedMsg;
+        document.getElementById("discussion").appendChild(li);
+        })
+        
+        .catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+</script> *@
+
+
+@* @{
+    ViewData["Title"] = "Chat";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #ece5dd;
+    }
+
+    .chat-container {
+        max-width: 450px;
+        margin: 20px auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+
+    /* Header */
+    .chat-header {
+        background: #075e54;
+        color: #fff;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+        .chat-header small {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+    /* Chat body */
+    .chat-box {
+        height: 420px;
+        padding: 15px;
+        background: #e5ddd5;
+        overflow-y: auto;
+    }
+
+    /* Messages */
+    .msg {
+        max-width: 75%;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-size: 14px;
+        word-wrap: break-word;
+        position: relative;
+        clear: both;
+    }
+
+    .sent {
+        background: #dcf8c6;
+        float: right;
+        border-top-right-radius: 0;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .received {
+        background: #ffffff;
+        float: left;
+        border-top-left-radius: 0;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .sender-name {
+        font-size: 11px;
+        font-weight: bold;
+        color: #075e54;
+        margin-bottom: 2px;
+    }
+
+    /* Input area */
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background: #f0f0f0;
+        border-top: 1px solid #ddd;
+    }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            background: #075e54;
+            color: #fff;
+            border: none;
+            margin-left: 10px;
+            padding: 10px 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            .chat-input button:hover {
+                background: #0b7a6d;
+            }
+
+    /* Scrollbar */
+    .chat-box::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+</style>
+
+
+<h3>WhatsApp Style SignalR Chat</h3>
+
+<div>
+    <input id="displayname" placeholder="Your name" />
+    <input id="recipientname" placeholder="Recipient name" />
+    <button onclick="connect()">Connect</button>
+</div>
+
+<hr />
+
+<div class="chat-box" id="discussion"></div>
+
+<div style="margin-top:10px;">
+    <input id="message" placeholder="Type message..." style="width:70%" />
+    <button id="sendmessage">Send</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.14/dist/browser/signalr.min.js"></script>
+
+<script>
+    let connection;
+    let currentUser;
+
+    function connect() {
+        currentUser = document.getElementById("displayname").value.trim();
+
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat?user=" + encodeURIComponent(currentUser))
+            .build();
+
+        connection.start().then(() => {
+            console.log("Connected as " + currentUser);
+        }).catch(err => console.error(err));
+
+        connection.on("ReceiveMessage", function (sender, message) {
+            addMessage(sender, message, false);
+        });
+    }
+
+    function addMessage(user, message, isSent) {
+        const div = document.createElement("div");
+        div.className = "msg " + (isSent ? "sent" : "received");
+        div.innerText = user + ": " + message;
+        document.getElementById("discussion").appendChild(div);
+        document.getElementById("discussion").scrollTop =
+            document.getElementById("discussion").scrollHeight;
+    }
+
+    document.getElementById("sendmessage").addEventListener("click", function () {
+        const recipient = document.getElementById("recipientname").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!connection || !recipient || !message) return;
+
+        connection.invoke("SendMessageToUser", recipient, message)
+            .then(() => {
+                addMessage(currentUser, message, true);
+                document.getElementById("message").value = "";
+            })
+            .catch(err => console.error(err));
+    });
+</script> *@
+
+
+@* ///////////////////////////////////////////////// *@
+
+
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<style>
+    body {
+        margin: 0;
+        font-family: Segoe UI, Arial;
+        background: #ece5dd;
+    }
+
+    .chat-container {
+        max-width: 420px;
+        margin: auto;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+    }
+
+    .chat-header {
+        background: #075e54;
+        color: #fff;
+        padding: 12px;
+        font-weight: 600;
+    }
+
+        .chat-header small {
+            display: block;
+            font-size: 12px;
+            opacity: .8;
+        }
+
+    .chat-box {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        background: #e5ddd5;
+    }
+
+    .msg {
+        max-width: 75%;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        font-size: 14px;
+        clear: both;
+    }
+
+    .sent {
+        background: #dcf8c6;
+        float: right;
+        border-top-right-radius: 0;
+    }
+
+    .received {
+        background: #fff;
+        float: left;
+        border-top-left-radius: 0;
+    }
+
+    .meta {
+        font-size: 11px;
+        color: #555;
+        text-align: right;
+        margin-top: 4px;
+    }
+
+    .tick {
+        margin-left: 5px;
+        color: #4fc3f7;
+    }
+
+    .typing {
+        font-size: 12px;
+        color: #444;
+        margin: 5px;
+    }
+
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background: #f0f0f0;
+    }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: #075e54;
+            color: #fff;
+            border: none;
+            margin-left: 10px;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+    @@media (max-width:600px) {
+        .chat-container
+
+    {
+        max-width: 100%;
+    }
+
+    }
+</style>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        SignalR Chat
+        <small id="status">Offline</small>
+    </div>
+
+    <div style="padding:8px;">
+        <input id="displayname" placeholder="Your name" />
+        <input id="recipientname" placeholder="Recipient name" />
+        <button onclick="connect()">Connect</button>
+    </div>
+
+    <div class="chat-box" id="discussion"></div>
+
+    <div class="typing" id="typing"></div>
+
+    <div class="chat-input">
+        <input id="message" placeholder="Type a message…" />
+        <button id="sendmessage">➤</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.14/dist/browser/signalr.min.js"></script>
+
+<script>
+    let connection;
+    let currentUser;
+    let typingTimer;
+
+    function connect() {
+        currentUser = displayname.value.trim();
+
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat?user=" + currentUser)
+            .build();
+
+        connection.start().then(() => {
+            status.innerText = "Online 🟢";
+        });
+
+        connection.on("ReceiveMessage", (user, message) => {
+            addMessage(user, message, false);
+            connection.invoke("MessageSeen", user);
+        });
+
+        connection.on("MessageSeenAck", () => {
+            const ticks = document.querySelectorAll(".sent .tick");
+            if (ticks.length) ticks[ticks.length - 1].innerText = "✔✔";
+        });
+
+        connection.on("ShowTyping", user => {
+            typing.innerText = user + " is typing...";
+        });
+
+        connection.on("HideTyping", () => typing.innerText = "");
+
+        connection.on("UserOnline", () => status.innerText = "Online 🟢");
+        connection.on("UserOffline", () => status.innerText = "Offline ⚪");
+    }
+
+    function addMessage(user, message, sent) {
+        const div = document.createElement("div");
+        div.className = "msg " + (sent ? "sent" : "received");
+
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        div.innerHTML = `
+            ${message}
+            <div class="meta">${time} ${sent ? '<span class="tick">✔</span>' : ''}</div>
+        `;
+        discussion.appendChild(div);
+        discussion.scrollTop = discussion.scrollHeight;
+    }
+
+    sendmessage.onclick = () => {
+        const msg = message.value.trim();
+        const to = recipientname.value.trim();
+
+        if (!msg || !to) return;
+
+        connection.invoke("SendMessageToUser", to, msg);
+        addMessage(currentUser, msg, true);
+        message.value = "";
+    };
+
+    message.oninput = () => {
+        connection.invoke("Typing", recipientname.value);
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() =>
+            connection.invoke("StopTyping", recipientname.value), 800);
+    };
+</script>

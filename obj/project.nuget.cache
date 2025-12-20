@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "NoPpau8UZuU=",
+  "success": true,
+  "projectFilePath": "E:\\Kaif\\ChatApp\\ChatApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ICC 92\\.nuget\\packages\\microsoft.aspnetcore.connections.abstractions\\8.0.22\\microsoft.aspnetcore.connections.abstractions.8.0.22.nupkg.sha512",
+    "C:\\Users\\ICC 92\\.nuget\\packages\\microsoft.aspnetcore.signalr.common\\8.0.22\\microsoft.aspnetcore.signalr.common.8.0.22.nupkg.sha512",
+    "C:\\Users\\ICC 92\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\ICC 92\\.nuget\\packages\\microsoft.extensions.features\\8.0.22\\microsoft.extensions.features.8.0.22.nupkg.sha512",
+    "C:\\Users\\ICC 92\\.nuget\\packages\\microsoft.extensions.options\\8.0.2\\microsoft.extensions.options.8.0.2.nupkg.sha512",
+    "C:\\Users\\ICC 92\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\ICC 92\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
